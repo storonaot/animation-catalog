@@ -4,12 +4,9 @@ import { getSerial, addSeral } from 'store/actions/serials'
 
 import { Link } from 'react-router'
 import MultiSelect from 'project/multi-select'
-import Field from 'project/field'
-import Textarea from 'project/textarea'
-
 import TextField from 'project/text-field'
 
-class SerialForm extends React.Component{
+class SerialCreate extends React.Component{
   constructor(props) {
     super(props)
 
@@ -128,4 +125,4 @@ export default connect(
       dispatch(addSeral(data))
     }
   })
-)(SerialForm)
+)(SerialCreate)

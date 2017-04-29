@@ -146,7 +146,8 @@ function update(req, res, next) {
     { upsert: true },
     (err, serial) => {
       if (err) return next(err, serial)
-      res.send(serial._id)
+      console.log(serial);
+      res.send(req.body)
     }
   )
 }

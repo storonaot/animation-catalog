@@ -6,11 +6,11 @@ class Serials extends React.Component{
   constructor(props) {
     super(props)
 
-    this.goToAddForm = this.goToAddForm.bind(this)
+    this.goToCreateForm = this.goToCreateForm.bind(this)
   }
 
-  goToAddForm() {
-    hashHistory.push('serial/add')
+  goToCreateForm() {
+    hashHistory.push('serial/create')
   }
 
   componentDidMount() {
@@ -35,7 +35,7 @@ class Serials extends React.Component{
       return (
         <div>
           <br/>
-          <button onClick={this.goToAddForm}>Add serial</button>
+        <button onClick={this.goToCreateForm}>Create serial</button>
           <br/>
           <br/>
           {serials}

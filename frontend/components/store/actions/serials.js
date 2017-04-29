@@ -35,12 +35,12 @@ export const deleteSerial = (id) => dispatch => {
 export const addSeral = (data) => dispatch => {
   axios.post('serials', data).then(response => {
     dispatch({
-      type: 'ADD_SERIAL_SUCCESS',
+      type: 'CREATE_SERIAL_SUCCESS',
       payload: response.data
     })
   }, error => {
     dispatch({
-      type: 'ADD_SERIAL_ERROR',
+      type: 'CREATE_SERIAL_ERROR',
       payload: response.data
     })
   })

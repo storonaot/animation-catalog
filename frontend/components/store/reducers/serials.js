@@ -23,15 +23,15 @@ export default function serials(state = defaultState, action) {
     case 'DELETE_SERIAL_ERROR':
       return { loading: false, data: null, errors: action.payload }
 
-    case 'ADD_SERIAL_ONLOAD':
+    case 'CREATE_SERIAL_ONLOAD':
       return { loading: true }
-    case 'ADD_SERIAL_SUCCESS':
+    case 'CREATE_SERIAL_SUCCESS':
       return {
         loading: false,
         data: _.concat(state.data, action.payload),
         errors: null
       }
-    case 'ADD_SERIAL_ERROR':
+    case 'CREATE_SERIAL_ERROR':
       return { loading: false, data: null, errors: action.payload}
     default:
       return state

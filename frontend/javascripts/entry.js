@@ -9,6 +9,8 @@ import { syncHistoryWithStore } from 'react-router-redux'
 import App from 'app'
 import Serials from 'serials'
 import Serial from 'serials/serial'
+import SerialCreate from 'serials/create'
+
 import Season from 'season'
 import Episode from 'episode'
 
@@ -16,7 +18,6 @@ import reducer from 'store/reducers'
 const store = createStore(reducer, composeWithDevTools(applyMiddleware(thunk)))
 const history = syncHistoryWithStore(hashHistory, store)
 
-import SerialForm from 'serials/addForm'
 
 render(
   <Provider store={store}>
@@ -24,7 +25,7 @@ render(
       <Route path='/' component={App}>
         <Route path='serials' component={Serials}/>
         <Route path='serials/:id' component={Serial} />
-        <Route path='serial/add' component={SerialForm} />
+        <Route path='serial/create' component={SerialCreate} />
         <Route path='seasons/:id' component={Season} />
         <Route path='episodes/:id' component={Episode} />
       </Route>
