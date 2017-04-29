@@ -1,0 +1,40 @@
+.field
+  position: relative
+  display: flex
+  flex-direction: column
+  width: 100%
+  input
+    padding: 10px
+    border: 2px solid rgba(16, 16, 17, 0.2)
+    border-radius: 3px
+    font-size: 1em
+    background-color: #fff
+    &:focus
+      outline: 0
+.error, .success
+  &::before
+    content: ''
+    position: absolute
+    right: 12px
+    bottom: 11px
+    display: inline-block
+    size: 20px
+.error
+  composes: field
+  &::before
+    background-image: svg('round-cross', '[fill]: $pink')
+  input
+    border-color: $pink
+.success
+  composes: field
+  &::before
+    background-image: svg('round-check', '[fill]: $green')
+  input
+    border-color: $green
+.label
+  color: #000
+  font-family: "Open Sans"
+  font-size: 16px
+  font-weight: 400
+  line-height: 21px
+  margin-bottom: 5px
