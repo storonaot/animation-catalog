@@ -14,12 +14,9 @@ const TextField = (props) => {
     autoFocus
   } = props
 
+
   const handleInput = (event) => {
     updateValue(event.target.value, name)
-  }
-
-  const handleBlur = () => {
-    saveValue(name)
   }
 
   const handleKeyDown = (event) => {
@@ -30,6 +27,8 @@ const TextField = (props) => {
     }
   }
 
+  document.addEventListener('keydown', handleKeyDown)
+
   const labelElem = label ? <label className={s.label}>{label}</label> : null
   const input = (
     <input
@@ -38,8 +37,6 @@ const TextField = (props) => {
       value={value}
       placeholder={placeholder}
       onChange={handleInput}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
       autoFocus={autoFocus}
     />
   )
@@ -49,7 +46,6 @@ const TextField = (props) => {
       value={value}
       placeholder={placeholder}
       onChange={handleInput}
-      onBlur={handleBlur}
       onKeyDown={handleKeyDown}
       autoFocus={autoFocus}
     ></textarea>

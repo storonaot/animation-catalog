@@ -2,7 +2,7 @@ import PropTypes from 'prop-types'
 
 import TextField from 'project/text-field'
 
-const Title = ({ value, name, mode, updateValue, saveValue, cancelUpdate, setMode }) => {
+const Title = ({ value, name, mode, updateValue, saveValue, cancelUpdate, setMode, fieldType }) => {
   const setEditMode = () => setMode('edit', name)
 
   if (mode === 'default') return <div onClick={setEditMode}>{value}</div>
@@ -15,6 +15,7 @@ const Title = ({ value, name, mode, updateValue, saveValue, cancelUpdate, setMod
       cancelUpdate={cancelUpdate}
       saveValue={saveValue}
       autoFocus={true}
+      fieldType={fieldType}
     />
   )
 }
@@ -28,5 +29,6 @@ Title.propTypes = {
   mode: PropTypes.oneOf(['edit', 'default']),
   updateValue: PropTypes.func.isRequired,
   saveValue: PropTypes.func.isRequired,
-  cancelUpdate: PropTypes.func.isRequired
+  cancelUpdate: PropTypes.func.isRequired,
+  fieldType: PropTypes.string
 }
