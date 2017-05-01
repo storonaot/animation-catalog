@@ -19,7 +19,9 @@ export default function serials(state = defaultState, action) {
       return { loading: false, data: null, errors: action.payload }
 
     case 'DELETE_SERIAL_SUCCESS':
-      return { loading: false, data: null, errors: null }
+      const id = action.payload
+      const data = state.data.filter(x => x._id !== id)
+      return { loading: false, data, errors: null }
     case 'DELETE_SERIAL_ERROR':
       return { loading: false, data: null, errors: action.payload }
 

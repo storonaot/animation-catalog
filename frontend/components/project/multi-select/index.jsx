@@ -12,6 +12,10 @@ class MultiSelect extends React.Component{
     document.addEventListener('keydown', this.handleKeyDown)
   }
 
+  componentWillUnmount () {
+    document.removeEventListener('keydown', this.handleKeyDown)
+  }
+
   componentDidMount() {
     const example = new Choices(this.select, {
       choices: this.props.options,

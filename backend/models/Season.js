@@ -4,7 +4,7 @@ const HttpError = require('../error').HttpError
 const ObjetID = require('mongodb').ObjectID
 const compare = require('../helpers').compare
 
-const Serial = require('./Serial').Serial
+const Serial = db.models.Serial
 
 const SeasonShema = new Schema({
   number: {
@@ -29,51 +29,51 @@ const SeasonShema = new Schema({
 
 const Season = db.model('Season', SeasonShema)
 
-SeasonShema.virtual('totalTime').get(function() {
-  if (this.episodes && this.episodes.length) {
-    let totalTime = 0
-    this.episodes.forEach(episode => {
-      totalTime += episode.timeMs
-    })
-    return totalTime
-  }
-  return null
-})
+// SeasonShema.virtual('totalTime').get(function() {
+//   if (this.episodes && this.episodes.length) {
+//     let totalTime = 0
+//     this.episodes.forEach(episode => {
+//       totalTime += episode.timeMs
+//     })
+//     return totalTime
+//   }
+//   return null
+// })
 
-SeasonShema.virtual('totalSize').get(function() {
-  if (this.episodes && this.episodes.length) {
-    let totalSize = 0
-    this.episodes.forEach(episode => {
-      totalSize += episode.sizeB
-    })
-    return totalSize
-  }
-  return null
-})
+// SeasonShema.virtual('totalSize').get(function() {
+//   if (this.episodes && this.episodes.length) {
+//     let totalSize = 0
+//     this.episodes.forEach(episode => {
+//       totalSize += episode.sizeB
+//     })
+//     return totalSize
+//   }
+//   return null
+// })
 
-SeasonShema.virtual('yearStart').get(function() {
-  if (this.episodes && this.episodes.length) {
-    const years = []
-    this.episodes.forEach(episode => {
-      years.push(new Date(episode.date).getTime())
-    })
-    years.sort(compare)
-    return new Date(years[0]).getFullYear()
-  }
-  return null
-})
+// SeasonShema.virtual('yearStart').get(function() {
+//   if (this.episodes && this.episodes.length) {
+//     const years = []
+//     this.episodes.forEach(episode => {
+//       years.push(new Date(episode.date).getTime())
+//     })
+//     years.sort(compare)
+//     return new Date(years[0]).getFullYear()
+//   }
+//   return null
+// })
 
-SeasonShema.virtual('yearEnd').get(function() {
-  if (this.episodes && this.episodes.length) {
-    const years = []
-    this.episodes.forEach(episode => {
-      years.push(new Date(episode.date).getTime())
-    })
-    years.sort(compare)
-    return new Date(years[years.length - 1]).getFullYear()
-  }
-  return null
-})
+// SeasonShema.virtual('yearEnd').get(function() {
+//   if (this.episodes && this.episodes.length) {
+//     const years = []
+//     this.episodes.forEach(episode => {
+//       years.push(new Date(episode.date).getTime())
+//     })
+//     years.sort(compare)
+//     return new Date(years[years.length - 1]).getFullYear()
+//   }
+//   return null
+// })
 
 function list(req, res, next) {
   return Season.find()
@@ -114,8 +114,17 @@ function create(req, res, next) {
   Season.create(req.body, (err, season) => {
     if (err) return next(err)
 
-    addSeasonToSerial(req.body._serial, season._id)
-    res.send(season)
+    // addSeasonToSerial(req.body._serial, season._id)
+    db.models.Serial.findByIdAndUpdate(
+      req.body._serial,
+      { '$push': { 'seasons': season._id } },
+      (err, serial) => {
+        if (err) throw err
+        res.send(season)
+        // console.log(serial)
+      }
+    )
+
   })
 }
 
@@ -132,27 +141,37 @@ function update(req, res, next) {
 }
 
 function remove(req, res, next) {
+    // db.models.Serial.findByIdAndUpdate(
+    // Serial.findOneAndUpdate(
+    //   season._serial,
+    //   $pop: ['seasons': season._id],
+    //   { new: true },
+    //   (err, newSeason) => {
+    //     if (err) return next(err)
+    //      res.send(newSeason)
+    //   }
+    // )
+
   Season.findOneAndRemove(
     { _id: req.params.id },
     (err, season) => {
       if (err) return next(err)
       res.send(204)
-      // res.status(204)
     }
   )
 }
 
-function addSeasonToSerial(serialId, seasonId) {
-  Serial.findByIdAndUpdate(
-    serialId,
-    { '$push': { 'seasons': seasonId } },
-    { 'new': true, 'upsert': true },
-    (err, serial) => {
-      if (err) throw err
-      // console.log(serial)
-    }
-  )
-}
+// function addSeasonToSerial(serialId, seasonId) {
+//   Serial.findByIdAndUpdate(
+//     serialId,
+//     { '$push': { 'seasons': seasonId } },
+//     { 'new': true, 'upsert': true },
+//     (err, serial) => {
+//       if (err) throw err
+//       // console.log(serial)
+//     }
+//   )
+// }
 
 exports.list = list
 exports.read = read

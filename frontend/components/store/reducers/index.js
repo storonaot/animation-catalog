@@ -3,6 +3,8 @@ import { routerReducer } from 'react-router-redux'
 
 import serials from './serials'
 import serial from './serial'
+import seasons from './seasons'
+import season from './season'
 
 import countries from './countries'
 import directors from './directors'
@@ -14,5 +16,7 @@ export default combineReducers({
   serial,
   countries,
   directors,
+  seasons,
+  season,
   studios
 })

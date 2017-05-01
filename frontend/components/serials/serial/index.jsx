@@ -1,9 +1,11 @@
 import { connect } from 'react-redux'
 import { Link } from 'react-router'
 import { getSerial, updateSerial } from 'store/actions/serials'
+import { getSeasons, createSeason } from 'store/actions/seasons'
 import { getCountries, getDirectors, getStudios } from 'store/actions/other'
 import Title from './title'
 import MultiTitle from './multi-title'
+import SeasonsList from './seasons-list'
 
 import update from 'react-addons-update'
 
@@ -26,7 +28,8 @@ class Serial extends React.Component{
         description: null,
         countries: null,
         directors: null,
-        studios: null
+        studios: null,
+        seasonNumber: ''
       }
     }
     this.updateValue = this.updateValue.bind(this)
@@ -35,11 +38,13 @@ class Serial extends React.Component{
     this.cancelUpdate = this.cancelUpdate.bind(this)
 
     this.getDefaults = this.getDefaults.bind(this)
+    this.createSeason = this.createSeason.bind(this)
   }
 
   componentDidMount() {
     this.props.onGetSerial(this.state.id)
     this.props.onGetSelects()
+    this.props.onGetSeasons()
   }
 
   updateValue(value, name) {
@@ -67,11 +72,19 @@ class Serial extends React.Component{
   }
 
   saveValue(name) {
+    this.setMode('default', name)
     if (this.state.data[name]) {
       const data = { [name]: this.state.data[name] }
       this.props.onUpdateSerial(this.state.id, data)
     }
-    this.setMode('default', name)
+  }
+
+  createSeason() {
+    const data = {
+      number: this.state.data.seasonNumber,
+      _serial: this.state.id
+    }
+    this.props.onCreateSeason(data)
   }
 
   cancelUpdate(name) {
@@ -103,7 +116,7 @@ class Serial extends React.Component{
 
   render() {
     const p = this.props
-    if (p.serial.data && p.directors.data && p.countries.data && p.studios.data) {
+    if (p.serial.data && p.directors.data && p.countries.data && p.studios.data && p.seasons.data) {
       const serial = p.serial.data
       const title = this.state.data.title === null ? serial.title : this.state.data.title
       const originalTitle = this.state.data.originalTitle === null ? serial.originalTitle : this.state.data.originalTitle
@@ -114,6 +127,8 @@ class Serial extends React.Component{
       const directorsOptions = this.getOptions(p.directors.data, directors)
       const studios = this.state.data.studios || this.getDefaults(p.serial.data.studios, 'studios')
       const studiosOptions = this.getOptions(p.studios.data, studios)
+
+      const seasons = p.seasons.data.filter(x => x._serial === this.state.id)
 
       return (
         <div>
@@ -179,6 +194,13 @@ class Serial extends React.Component{
             values={studios}
             cancelUpdate={this.cancelUpdate}
           />
+          <SeasonsList
+            seasons={seasons}
+            updateValue={this.updateValue}
+            name="seasonNumber"
+            value={this.state.data.seasonNumber}
+            createSeason={this.createSeason}
+          />
         </div>
       )
     }
@@ -192,11 +214,15 @@ export default connect(
     directors: state.directors,
     countries: state.countries,
     studios: state.studios,
+    seasons: state.seasons,
     ownProps
   }),
   dispatch => ({
     onGetSerial: (id) => {
       dispatch(getSerial(id))
+    },
+    onGetSeasons: (id) => {
+      dispatch(getSeasons())
     },
     onUpdateSerial: (id, data) => {
       dispatch(updateSerial(id, data))
@@ -205,6 +231,9 @@ export default connect(
       dispatch(getDirectors())
       dispatch(getCountries())
       dispatch(getStudios())
+    },
+    onCreateSeason: (data) => {
+      dispatch(createSeason(data))
     }
   })
 )(Serial)

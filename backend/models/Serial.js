@@ -1,8 +1,10 @@
 const db = require('../db')
 const Schema = db.Schema
 const ObjetID = require('mongodb').ObjectID
-
+const async = require('async')
 const compare = require('../helpers').compare
+
+const Season = require('./Season').Season
 
 const SerialShema = new Schema({
   title: {
@@ -41,65 +43,66 @@ const SerialShema = new Schema({
 
 const Serial = db.model('Serial', SerialShema)
 
-SerialShema.virtual('yearStart').get(function() {
-  if (this.seasons && this.seasons.length) {
-    const episodes = this.seasons[0].episodes
-    if (episodes && episodes.length) {
-      const years = []
-      episodes.forEach(episode => {
-        years.push(new Date(episode.date).getFullYear())
-      })
-      years.sort(compare)
-      return years[0]
-    }
-  }
-  return null
-})
 
-SerialShema.virtual('yearEnd').get(function() {
-  if (this.seasons && this.seasons.length) {
-    const episodes = this.seasons[this.seasons.length - 1].episodes
-    if (episodes && episodes.length) {
-      const years = []
-      episodes.forEach(episode => {
-        years.push(new Date(episode.date).getFullYear())
-      })
-      years.sort(compare)
-      return years[years.length - 1]
-    }
-  }
-  return null
-})
+// SerialShema.virtual('yearStart').get(function() {
+//   if (this.seasons && this.seasons.length) {
+//     const episodes = this.seasons[0].episodes
+//     if (episodes && episodes.length) {
+//       const years = []
+//       episodes.forEach(episode => {
+//         years.push(new Date(episode.date).getFullYear())
+//       })
+//       years.sort(compare)
+//       return years[0]
+//     }
+//   }
+//   return null
+// })
 
-SerialShema.virtual('totalTime').get(function() {
-  if (this.seasons && this.seasons.length) {
-    let totalTime = 0
-    this.seasons.forEach(season => {
-      if (season.episodes && season.episodes.length) {
-        season.episodes.forEach(episode => {
-          totalTime += episode.timeMs
-        })
-      }
-    })
-    return totalTime
-  }
-  return null
-})
+// SerialShema.virtual('yearEnd').get(function() {
+//   if (this.seasons && this.seasons.length) {
+//     const episodes = this.seasons[this.seasons.length - 1].episodes
+//     if (episodes && episodes.length) {
+//       const years = []
+//       episodes.forEach(episode => {
+//         years.push(new Date(episode.date).getFullYear())
+//       })
+//       years.sort(compare)
+//       return years[years.length - 1]
+//     }
+//   }
+//   return null
+// })
 
-SerialShema.virtual('totalSize').get(function() {
-  if (this.seasons && this.seasons.length) {
-    let totalSize = 0
-    this.seasons.forEach(season => {
-      if (season.episodes && season.episodes.length) {
-        season.episodes.forEach(episode => {
-          totalSize += episode.sizeB
-        })
-      }
-    })
-    return totalSize
-  }
-  return null
-})
+// SerialShema.virtual('totalTime').get(function() {
+//   if (this.seasons && this.seasons.length) {
+//     let totalTime = 0
+//     this.seasons.forEach(season => {
+//       if (season.episodes && season.episodes.length) {
+//         season.episodes.forEach(episode => {
+//           totalTime += episode.timeMs
+//         })
+//       }
+//     })
+//     return totalTime
+//   }
+//   return null
+// })
+
+// SerialShema.virtual('totalSize').get(function() {
+//   if (this.seasons && this.seasons.length) {
+//     let totalSize = 0
+//     this.seasons.forEach(season => {
+//       if (season.episodes && season.episodes.length) {
+//         season.episodes.forEach(episode => {
+//           totalSize += episode.sizeB
+//         })
+//       }
+//     })
+//     return totalSize
+//   }
+//   return null
+// })
 
 function list(req, res, next) {
   return Serial.find()
@@ -107,11 +110,11 @@ function list(req, res, next) {
             path: '_cover',
             select: 'fileName',
           })
-          .populate({
-            path: 'seasons',
-            select: 'episodes',
-            populate: { path: 'episodes', select: 'date timeMs sizeB' }
-          })
+          // .populate({
+          //   path: 'seasons',
+          //   select: 'episodes',
+          //   populate: { path: 'episodes', select: 'date timeMs sizeB' }
+          // })
           .exec((err, serials) => {
             if (err) return next(err)
             res.json(serials)
@@ -121,11 +124,11 @@ function list(req, res, next) {
 function read(req, res, next) {
   return Serial.findOne({ _id: req.params.id })
                 .populate('_cover directors countries studios')
-                .populate({
-                  path: 'seasons',
-                  select: ['number', '_cover', 'episodes'],
-                  populate: { path: '_cover episodes' }
-                })
+                // .populate({
+                //   path: 'seasons',
+                //   select: ['number', '_cover', 'episodes'],
+                //   populate: { path: '_cover episodes' }
+                // })
                 .exec((err, serial) => {
                   if (err) return next(err)
                   res.json(serial)
@@ -133,6 +136,7 @@ function read(req, res, next) {
 }
 
 function create(req, res, next) {
+  const newSerial = new Serial(req.body)
   Serial.create(req.body, (err, serial) => {
     if (err) return next(err)
     res.send(serial)
@@ -146,20 +150,29 @@ function update(req, res, next) {
     { upsert: true },
     (err, serial) => {
       if (err) return next(err, serial)
-      console.log(serial);
       res.send(req.body)
     }
   )
 }
 
-function remove(req, res, next) {
-  Serial.findOneAndRemove(
-    { _id: req.params.id },
-    (err, serial) => {
-      if (err) return next(err)
-      res.send(serial._id)
+function remove(req, res, callback) {
+  async.waterfall([
+    (callback) => {
+      Serial.findOne({ _id: req.params.id }, callback)
+    },
+    (serial, callback) => {
+      const seasons = serial.seasons
+      async.each(seasons, (seasonId, callback) => {
+        Season.findOneAndRemove({ _id: seasonId }, callback)
+      }, callback)
+    },
+    (callback) => {
+      Serial.findOneAndRemove({ _id: req.params.id }, callback)
     }
-  )
+  ], (err, serial) => {
+    if (err) return next(err)
+    res.send(serial._id)
+  })
 }
 
 exports.list = list

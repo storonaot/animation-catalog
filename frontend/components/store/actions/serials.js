@@ -6,6 +6,7 @@ export const getSerials = () => dispatch => {
   })
 
   axios.get('/serials').then(response => {
+    // console.log('getSerials response', response)
     dispatch({
       type: 'FETCH_SERIALS_SUCCESS',
       payload: response.data
@@ -18,22 +19,11 @@ export const getSerials = () => dispatch => {
   })
 }
 
-export const deleteSerial = (id) => dispatch => {
-  axios.delete(`serials/${id}`).then(response => {
-    dispatch({
-      type: 'DELETE_SERIAL_SUCCESS',
-      payload: response.data
-    })
-  }, error => {
-    dispatch({
-      type: 'DELETE_SERIAL_ERROR',
-      payload: error.response
-    })
-  })
-}
 
-export const addSeral = (data) => dispatch => {
+// CREATE
+export const createSeral = (data) => dispatch => {
   axios.post('serials', data).then(response => {
+    // console.log('createSeral response', response)
     dispatch({
       type: 'CREATE_SERIAL_SUCCESS',
       payload: response.data
@@ -46,6 +36,8 @@ export const addSeral = (data) => dispatch => {
   })
 }
 
+
+// READ
 export const getSerial = (id) => dispatch => {
   dispatch({
     type: 'FETCH_SERIAL_ONLOAD'
@@ -64,7 +56,7 @@ export const getSerial = (id) => dispatch => {
   })
 }
 
-
+// UPDATE
 export const updateSerial = (id, data) => dispatch => {
   dispatch({
     type: 'UPDATE_SERIAL_ONLOAD'
@@ -78,6 +70,22 @@ export const updateSerial = (id, data) => dispatch => {
   }, error => {
     dispatch({
       type: 'UPDATE_SERIAL_ERROR',
+      payload: error.response
+    })
+  })
+}
+
+// DELETE
+export const deleteSerial = (id) => dispatch => {
+  // console.log('deleteSerial', id);
+  axios.delete(`serials/${id}`).then(response => {
+    dispatch({
+      type: 'DELETE_SERIAL_SUCCESS',
+      payload: response.data
+    })
+  }, error => {
+    dispatch({
+      type: 'DELETE_SERIAL_ERROR',
       payload: error.response
     })
   })

@@ -1,6 +1,6 @@
 import { connect } from 'react-redux'
 import { getCountries, getDirectors, getStudios } from 'store/actions/other'
-import { getSerial, addSeral } from 'store/actions/serials'
+import { getSerial, createSeral } from 'store/actions/serials'
 
 import { Link } from 'react-router'
 import MultiSelect from 'project/multi-select'
@@ -27,7 +27,7 @@ class SerialCreate extends React.Component{
   }
 
   saveData() {
-    this.props.onSaveSerial(this.state)
+    this.props.onCreateSerial(this.state)
   }
 
   getOptions(obj) {
@@ -97,7 +97,7 @@ class SerialCreate extends React.Component{
                           'Режиссеры',
                           'Выберите режиссеров')}
         <br/>
-        {this.multiSelect(this.props.directors.data,
+      {this.multiSelect(this.props.studios.data,
                           'studios',
                           'Студии',
                           'Выберите студии')}
@@ -121,8 +121,8 @@ export default connect(
       dispatch(getCountries())
       dispatch(getStudios())
     },
-    onSaveSerial: (data) => {
-      dispatch(addSeral(data))
+    onCreateSerial: (data) => {
+      dispatch(createSeral(data))
     }
   })
 )(SerialCreate)
