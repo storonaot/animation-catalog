@@ -5,7 +5,9 @@ import { getSeasons, createSeason } from 'store/actions/seasons'
 import { getCountries, getDirectors, getStudios } from 'store/actions/other'
 import Title from './title'
 import MultiTitle from './multi-title'
+import List from 'project/list'
 import SeasonsList from './seasons-list'
+import TextField from 'project/text-field'
 
 import update from 'react-addons-update'
 
@@ -44,12 +46,13 @@ class Serial extends React.Component{
   componentDidMount() {
     this.props.onGetSerial(this.state.id)
     this.props.onGetSelects()
-    this.props.onGetSeasons()
+    this.props.onGetSeasons(this.state.id)
   }
 
   updateValue(value, name) {
     const newState = update(this.state, { data: { [name]: { $set: value } } })
     this.setState(newState)
+    console.log('this.state', this.state);
   }
 
   setMode(mode, name) {
@@ -128,7 +131,12 @@ class Serial extends React.Component{
       const studios = this.state.data.studios || this.getDefaults(p.serial.data.studios, 'studios')
       const studiosOptions = this.getOptions(p.studios.data, studios)
 
-      const seasons = p.seasons.data.filter(x => x._serial === this.state.id)
+      const seasons = p.seasons.data
+
+      let button
+      if (this.state.data.seasonNumber.length && !isNaN(this.state.data.seasonNumber)) {
+        button = <button onClick={this.createSeason}>Create season</button>
+      }
 
       return (
         <div>
@@ -194,13 +202,17 @@ class Serial extends React.Component{
             values={studios}
             cancelUpdate={this.cancelUpdate}
           />
-          <SeasonsList
-            seasons={seasons}
+          <List
+            dataArr={seasons}
+            name="Сезон"
+            url="seasons"
+          />
+          <TextField
             updateValue={this.updateValue}
             name="seasonNumber"
             value={this.state.data.seasonNumber}
-            createSeason={this.createSeason}
           />
+          {button}
         </div>
       )
     }
@@ -222,7 +234,7 @@ export default connect(
       dispatch(getSerial(id))
     },
     onGetSeasons: (id) => {
-      dispatch(getSeasons())
+      dispatch(getSeasons(id))
     },
     onUpdateSerial: (id, data) => {
       dispatch(updateSerial(id, data))

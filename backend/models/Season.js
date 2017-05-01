@@ -3,6 +3,8 @@ const Schema = db.Schema
 const HttpError = require('../error').HttpError
 const ObjetID = require('mongodb').ObjectID
 const compare = require('../helpers').compare
+const url = require('url')
+
 
 const Serial = db.models.Serial
 
@@ -76,11 +78,21 @@ const Season = db.model('Season', SeasonShema)
 // })
 
 function list(req, res, next) {
-  return Season.find()
-               .exec((err, seasons) => {
-                  if (err) return next(err)
-                  res.json(seasons)
-                })
+  const parsed = url.parse(req.url, true)
+  if (parsed.query.id) {
+    return Season.find()
+                 .where({ _serial: parsed.query.id})
+                 .exec((err, seasons) => {
+                    if (err) return next(err)
+                    res.json(seasons)
+                  })
+  } else {
+    return Season.find()
+                 .exec((err, seasons) => {
+                    if (err) return next(err)
+                    res.json(seasons)
+                  })
+  }
 }
 
 function read(req, res, next) {
@@ -94,6 +106,10 @@ function read(req, res, next) {
                 .populate({
                   path: '_cover',
                   select: 'fileName'
+                })
+                .populate({
+                  path: '_serial',
+                  select: 'title'
                 })
                 .populate({
                   path: 'episodes',
@@ -114,14 +130,12 @@ function create(req, res, next) {
   Season.create(req.body, (err, season) => {
     if (err) return next(err)
 
-    // addSeasonToSerial(req.body._serial, season._id)
     db.models.Serial.findByIdAndUpdate(
       req.body._serial,
       { '$push': { 'seasons': season._id } },
       (err, serial) => {
         if (err) throw err
         res.send(season)
-        // console.log(serial)
       }
     )
 
@@ -160,18 +174,6 @@ function remove(req, res, next) {
     }
   )
 }
-
-// function addSeasonToSerial(serialId, seasonId) {
-//   Serial.findByIdAndUpdate(
-//     serialId,
-//     { '$push': { 'seasons': seasonId } },
-//     { 'new': true, 'upsert': true },
-//     (err, serial) => {
-//       if (err) throw err
-//       // console.log(serial)
-//     }
-//   )
-// }
 
 exports.list = list
 exports.read = read

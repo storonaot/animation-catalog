@@ -1,11 +1,13 @@
 import axios from 'axios'
 
-export const getSeasons = () => dispatch => {
+export const getSeasons = (id = null) => dispatch => {
   dispatch({
     type: 'FETCH_SEASONS_ONLOAD'
   })
 
-  axios.get('/seasons').then(response => {
+  const url = id ? `/seasons?id=${id}` : '/seasons'
+
+  axios.get(url).then(response => {
     dispatch({
       type: 'FETCH_SEASONS_SUCCESS',
       payload: response.data
@@ -25,7 +27,6 @@ export const getSeason = (id) => dispatch => {
   })
 
   axios.get(`/seasons/${id}`).then(response => {
-    console.log('getSeason response', response);
     dispatch({
       type: 'FETCH_SEASON_SUCCESS',
       payload: response.data
@@ -38,27 +39,8 @@ export const getSeason = (id) => dispatch => {
   })
 }
 
-// export const getSeason = () => dispatch => {
-//   dispatch({
-//     type: 'FETCH_SEASON_ONLOAD'
-//   })
-//
-//   axios.get('/seasons').then(response => {
-//     dispatch({
-//       type: 'FETCH_SEASON_SUCCESS',
-//       payload: response.data
-//     })
-//   }, error => {
-//     dispatch({
-//       type: 'FETCH_SEASON_ERROR',
-//       payload: error.response
-//     })
-//   })
-// }
-
 export const createSeason = (data) => dispatch => {
-  axios.post('seasons', data).then(response => {
-    console.log('response', response.data);
+  axios.post('/seasons', data).then(response => {
     dispatch({
       type: 'CREATE_SEASON_SUCCESS',
       payload: response.data

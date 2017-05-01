@@ -9,7 +9,7 @@ export default function season(state = defaultState, action) {
     case 'FETCH_SEASON_ONLOAD':
       return { loading: true }
     case 'FETCH_SEASON_SUCCESS':
-      console.log('FETCH_SEASON_SUCCESS', action.payload);
+      // console.log('FETCH_SEASON_SUCCESS', action.payload);
       return { loading: false, data: action.payload, errors: null }
     case 'FETCH_SEASON_ERROR':
       return { loading: false, data: null, errors: action.payload }
