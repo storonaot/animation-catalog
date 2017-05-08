@@ -57,41 +57,41 @@ export const getStudios = () => dispatch => {
   })
 }
 
-export const getTranslators = () => dispatch => {
-  dispatch({
-    type: 'FETCH_TRANSLATORS_ONLOAD'
-  })
+// export const getTranslators = () => dispatch => {
+//   dispatch({
+//     type: 'FETCH_TRANSLATORS_ONLOAD'
+//   })
+//
+//   axios.get('/translators').then(response => {
+//     dispatch({
+//       type: 'FETCH_TRANSLATORS_SUCCESS',
+//       payload: response.data
+//     })
+//   }, error => {
+//     dispatch({
+//       type: 'FETCH_TRANSLATORS_ERROR',
+//       payload: error.response
+//     })
+//   })
+// }
 
-  axios.get('/translators').then(response => {
-    dispatch({
-      type: 'FETCH_TRANSLATORS_SUCCESS',
-      payload: response.data
-    })
-  }, error => {
-    dispatch({
-      type: 'FETCH_TRANSLATORS_ERROR',
-      payload: error.response
-    })
-  })
-}
-
-export const getVoiceovers = () => dispatch => {
-  dispatch({
-    type: 'FETCH_VOICEOVERS_ONLOAD'
-  })
-
-  axios.get('/voiceovers').then(response => {
-    dispatch({
-      type: 'FETCH_VOICEOVERS_SUCCESS',
-      payload: response.data
-    })
-  }, error => {
-    dispatch({
-      type: 'FETCH_VOICEOVERS_ERROR',
-      payload: error.response
-    })
-  })
-}
+// export const getVoiceovers = () => dispatch => {
+//   dispatch({
+//     type: 'FETCH_VOICEOVERS_ONLOAD'
+//   })
+//
+//   axios.get('/voiceovers').then(response => {
+//     dispatch({
+//       type: 'FETCH_VOICEOVERS_SUCCESS',
+//       payload: response.data
+//     })
+//   }, error => {
+//     dispatch({
+//       type: 'FETCH_VOICEOVERS_ERROR',
+//       payload: error.response
+//     })
+//   })
+// }
 
 export const getVideoformats = () => dispatch => {
   dispatch({

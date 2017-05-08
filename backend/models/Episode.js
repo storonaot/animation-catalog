@@ -68,11 +68,22 @@ const EpisodeShema = new Schema({
   scenes: [
     { type: Schema.ObjectId, ref: 'Image'}
   ],
-  translators: [
-    { type: Schema.ObjectId, ref: 'Translator'}
+  // translators: [
+  //   { type: Schema.ObjectId, ref: 'Translator'}
+  // ],
+  // voiceovers: [
+  //   { type: Schema.ObjectId, ref: 'Voiceover'}
+  // ],
+  subtitles: [
+    { type: Schema.ObjectId, ref: 'Subtitles'}
   ],
-  voiceovers: [
-    { type: Schema.ObjectId, ref: 'Voiceover'}
+  _language: {
+    type: Schema.ObjectId,
+    ref: 'Language',
+    required: true
+  },
+  audiotracks: [
+    { type: Schema.ObjectId, ref: 'Audiotracks'}
   ],
   notes: [
     { type: Schema.ObjectId, ref: 'Note'}

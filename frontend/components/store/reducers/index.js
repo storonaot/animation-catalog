@@ -11,9 +11,9 @@ import countries from './countries'
 import directors from './directors'
 import studios from './studios'
 import mediacontainers from './mediacontainers'
-import translators from './translators'
+// import translators from './translators'
 import videoformats from './videoformats'
-import voiceovers from './voiceovers'
+// import voiceovers from './voiceovers'
 
 export default combineReducers({
   routing: routerReducer,
@@ -25,8 +25,8 @@ export default combineReducers({
   season,
   episodes,
   mediacontainers,
-  translators,
+  // translators,
   videoformats,
-  voiceovers,
+  // voiceovers,
   studios
 })
