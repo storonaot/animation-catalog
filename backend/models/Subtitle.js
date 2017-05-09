@@ -1,54 +1,55 @@
 const db = require('../db')
 const Schema = db.Schema
 
-const VoiceoverShema = new Schema({
-  name: {
+const SubtitleShema = new Schema({
+  type: {
     type: String,
-    required: true
+    required: true,
+    uniq: true
   }
-}, { collection: 'voiceover'})
+}, { collection: 'subtitle' })
 
-const Voiceover = db.model('Voiceover', VoiceoverShema)
+const Subtitle = db.model('Subtitle', SubtitleShema)
 
-function list(req, res, next) {
-  return Voiceover.find().exec((err, voiceovers) => {
+function list (req, res, next) {
+  return Subtitle.find().exec((err, subtitles) => {
     if (err) return next(err)
-    res.json(voiceovers)
+    res.json(subtitles)
   })
 }
 
 function read(req, res, next) {
-  return Voiceover.findOne({
+  return Subtitle.findOne({
     _id: req.params.id
-  }).exec((err, voiceover) => {
+  }).exec((err, subtitle) => {
     if (err) return next(err)
-    res.json(voiceover)
+    res.json(subtitle)
   })
 }
 
 function create(req, res, next) {
-  Voiceover.create(req.body, (err, voiceover) => {
+  Subtitle.create(req.body, (err, subtitle) => {
     if (err) return next(err)
-    res.send(voiceover)
+    res.send(subtitle)
   })
 }
 
 function update(req, res, next) {
-  Voiceover.findOneAndUpdate(
+  Subtitle.findOneAndUpdate(
     { _id: req.params.id },
     { $set: req.body },
     { upsert: true },
-    (err, newVoiceover) => {
+    (err, newSubtitle) => {
       if (err) return next(err)
-      res.send(newVoiceover)
+      res.send(newSubtitle)
     }
   )
 }
 
 function remove(req, res, next) {
-  Voiceover.findOneAndRemove(
+  Subtitle.findOneAndRemove(
     { _id: req.params.id },
-    (err, сover) => {
+    (err, subtitle) => {
       if (err) return next(err)
       res.status(204)
     }
@@ -60,4 +61,4 @@ exports.read = read
 exports.create = create
 exports.update = update
 exports.remove = remove
-exports.Voiceover = Voiceover
+exports.Subtitle = Subtitle

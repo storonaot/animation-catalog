@@ -4,7 +4,8 @@ const Schema = db.Schema
 const StudioShema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    uniq: true
   }
 }, { collection: 'studio'})
 

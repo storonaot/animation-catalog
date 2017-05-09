@@ -79,8 +79,7 @@ const EpisodeShema = new Schema({
   ],
   _language: {
     type: Schema.ObjectId,
-    ref: 'Language',
-    required: true
+    ref: 'Language'
   },
   audiotracks: [
     { type: Schema.ObjectId, ref: 'Audiotracks'}

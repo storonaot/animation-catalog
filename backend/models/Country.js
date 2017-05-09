@@ -5,7 +5,8 @@ const HttpError = require('../error').HttpError
 const CountryShema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
+    uniq: true
   }
 }, { collection: 'country'})
 

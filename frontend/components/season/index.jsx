@@ -25,8 +25,8 @@ class Season extends React.Component{
       sizeB: '', // required
       _season: this.props.ownProps.params.id, // required ID
       _serial: null, // required ID
-      translators: null, // multiSelect
-      voiceovers: null, // multiSelect
+      // translators: null, // multiSelect
+      // voiceovers: null, // multiSelect
       _videoformat: null, //select
       _mediacontainer: null //select
     }

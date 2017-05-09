@@ -2,7 +2,11 @@ const db = require('../db')
 const Schema = db.Schema
 
 const MediacontainerShema = new Schema({
-  name: String
+  name: {
+    type: String,
+    uniq: true
+  }
+
 }, { collection: 'mediacontainer'})
 
 const Mediacontainer = db.model('Mediacontainer', MediacontainerShema)
